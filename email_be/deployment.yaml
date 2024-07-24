@@ -1,0 +1,19 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: CHILLOUT_BACKEND
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: CHILLOUT_BACKEND
+  template:
+    metadata:
+      labels:
+        app: CHILLOUT_BACKEND
+    spec:
+      containers:
+      - name: CHILLOUT_BACKEND
+        image: your-username/your-app-name:latest
+        ports:
+        - containerPort: 3000
