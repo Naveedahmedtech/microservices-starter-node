@@ -1,10 +1,10 @@
 import { Request, Response, router } from "@/config/express.config";
-import authEmailRoute from "./auth";
 
 // ** routes
 import csrfProtection from "@/middlewares/csrfTokenHandler";
+import { emailWebhook } from "@/controller";
 
-router.use("/auth", authEmailRoute);
+router.use("/email", emailWebhook);
 
 router.get("/csrf-token", csrfProtection, (req: Request, res: Response) => {
   res.json({ csrfToken: req.csrfToken() });

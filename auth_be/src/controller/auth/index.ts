@@ -16,7 +16,7 @@ import {
 
 import axios from "axios";
 
-const REGISTRATION_EMAIL_WEBHOOK = process.env.REGISTRATION_EMAIL_WEBHOOK!;
+const EMAIL_WEBHOOK = process.env.EMAIL_WEBHOOK!;
 
 export const registerUser = async (
   req: Request,
@@ -27,13 +27,16 @@ export const registerUser = async (
     const newUser = await registerUserService(req.body);
 
     // Prepare data for email
-    const emailData = {
-      email: req.body.email,
-      accessToken: newUser.accessToken,
+    const webhookPayload = {
+      data: {
+        email: req.body.email,
+        access_token: newUser.accessToken,
+      },
+      event_type: "account_registration",
     };
 
     // Send email asynchronously without blocking
-    sendRegistrationEmail(emailData);
+    sendRegistrationEmail(webhookPayload);
 
     return sendSuccessResponse(
       res,
@@ -53,12 +56,15 @@ export const registerUser = async (
 };
 
 // Function to send registration email
-const sendRegistrationEmail = async (data: {
-  email: string;
-  accessToken: string;
+const sendRegistrationEmail = async (payload: {
+  data: {
+    email: string;
+    access_token: string;
+  };
+  event_type: string;
 }) => {
   try {
-    await axios.post(REGISTRATION_EMAIL_WEBHOOK, data);
+    await axios.post(EMAIL_WEBHOOK, payload);
   } catch (error) {
     console.error("Error sending registration email:", error);
     // You can handle errors logging or other actions here

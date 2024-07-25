@@ -1,16 +1,9 @@
-import { NextFunction, Request, Response } from "@/config/express.config";
 import { sendEmail } from "@/lib/sendEmail";
-import { compileEmailTemplate } from "@/utils/emailHelper";
-import { sendSuccessResponse } from "@/utils/responseHandler";
+import { compileEmailTemplate } from "./emailHelper";
 
-export const registerEmail = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
-  const templateName = "registration-confirmation";
+export const handleAccountRegistration = async (email:string, accessToken:string) => {
   try {
-    const { email, accessToken } = req.body;
+    const templateName = "registration-confirmation";
     const data: {
       to: string;
       subject: string;
@@ -28,13 +21,7 @@ export const registerEmail = async (
     const html = await compileEmailTemplate(templateName, foldername, data);
     data.html = html;
     await sendEmail(data);
-    return sendSuccessResponse(
-      res,
-      "Email send successfully",
-      "We've sent you a verification link on your email address. Please verify it to complete the registration!",
-      201
-    );
-  } catch (error: Error | any) {
-    next(error);
+  } catch (error) {
+    throw error;
   }
 };
